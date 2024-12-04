@@ -18,7 +18,7 @@ const EmployeeDetails = () => {
     }
     useEffect(() => {
         fetchEmployeeDetails();
-    }, [fetchEmployeeDetails])
+    }, [])
 
     if (!employee) {
         return <div>Employee not found</div>;
