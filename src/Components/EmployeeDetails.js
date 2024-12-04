@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { GetEmployeeDetailsById } from '../api';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const EmployeeDetails = () => {
-    const navigate = useNavigate();
-    const { id } = useParams();
-    const [employee, setEmployee] = useState({});
+    const [employee, setEmployee] = useState(null);
 
-    const fetchEmployeeDetails = async () => {
+    // Wrapping fetchEmployeeDetails with useCallback
+    const fetchEmployeeDetails = useCallback(async () => {
         try {
-            const data = await GetEmployeeDetailsById(id);
+            const response = await fetch('/api/employee/details'); // Replace with actual API endpoint
+            const data = await response.json();
             setEmployee(data);
-        } catch (err) {
-            alert('Error', err);
+        } catch (error) {
+            console.error('Error fetching employee details:', error);
         }
-    }
-    useEffect(() => {
-        fetchEmployeeDetails();
-    }, [])
+    }, []); // Empty dependency array, so fetchEmployeeDetails is memoized
 
-    if (!employee) {
-        return <div>Employee not found</div>;
-    }
+    // Using useEffect to call fetchEmployeeDetails once on component mount
+    useEffect(() => {
+        fetchEmployeeDetails(); // Fetch employee details when component mounts
+    }, [fetchEmployeeDetails]); // Dependency array ensures fetchEmployeeDetails doesn't change unless necessary
+
+    
+           
+
+
 
     return (
         <div className="container mt-5">
