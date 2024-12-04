@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-
+ import { useNavigate, useParams } from 'react-router-dom';
+ import 'bootstrap/dist/css/bootstrap.min.css';
+import { GetEmployeeDetailsById } from '../api';
 const EmployeeDetails = () => {
+    const navigate = useNavigate();
+     const { id } = useParams();
     const [employee, setEmployee] = useState(null);
 
     // Wrapping fetchEmployeeDetails with useCallback
     const fetchEmployeeDetails = useCallback(async () => {
         try {
-            const response = await fetch('/api/employee/details'); // Replace with actual API endpoint
+            const response = await GetEmployeeDetailsById(id);; // Replace with actual API endpoint
             const data = await response.json();
             setEmployee(data);
         } catch (error) {
