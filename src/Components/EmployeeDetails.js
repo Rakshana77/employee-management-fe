@@ -1,32 +1,28 @@
 import React, { useState, useEffect, useCallback } from 'react';
- import { useNavigate, useParams } from 'react-router-dom';
- import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate, useParams } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { GetEmployeeDetailsById } from '../api';
+
 const EmployeeDetails = () => {
     const navigate = useNavigate();
-     const { id } = useParams();
+    const { id } = useParams();
     const [employee, setEmployee] = useState(null);
 
-    // Wrapping fetchEmployeeDetails with useCallback
+    // Wrapping fetchEmployeeDetails with useCallback and including 'id' as a dependency
     const fetchEmployeeDetails = useCallback(async () => {
         try {
-            const response = await GetEmployeeDetailsById(id);; // Replace with actual API endpoint
+            const response = await GetEmployeeDetailsById(id); // Fetch employee details by ID
             const data = await response.json();
             setEmployee(data);
         } catch (error) {
             console.error('Error fetching employee details:', error);
         }
-    }, []); // Empty dependency array, so fetchEmployeeDetails is memoized
+    }, [id]); // 'id' should be included in the dependency array
 
-    // Using useEffect to call fetchEmployeeDetails once on component mount
+    // Using useEffect to call fetchEmployeeDetails when component mounts or id changes
     useEffect(() => {
         fetchEmployeeDetails(); // Fetch employee details when component mounts
-    }, [fetchEmployeeDetails]); // Dependency array ensures fetchEmployeeDetails doesn't change unless necessary
-
-    
-           
-
-
+    }, [fetchEmployeeDetails]); // The effect will re-run when fetchEmployeeDetails changes
 
     return (
         <div className="container mt-5">
@@ -35,22 +31,26 @@ const EmployeeDetails = () => {
                     <h2>Employee Details</h2>
                 </div>
                 <div className="card-body">
-                    <div className="row mb-3">
-                        <div className="col-md-3">
-                            <img
-                                src={employee.profileImage}
-                                alt={employee.name}
-                                className="img-fluid rounded"
-                            />
+                    {employee ? (
+                        <div className="row mb-3">
+                            <div className="col-md-3">
+                                <img
+                                    src={employee.profileImage}
+                                    alt={employee.name}
+                                    className="img-fluid rounded"
+                                />
+                            </div>
+                            <div className="col-md-9">
+                                <h4>{employee.name}</h4>
+                                <p><strong>Email:</strong> {employee.email}</p>
+                                <p><strong>Phone:</strong> {employee.phone}</p>
+                                <p><strong>Department:</strong> {employee.department}</p>
+                                <p><strong>Salary:</strong> {employee.salary}</p>
+                            </div>
                         </div>
-                        <div className="col-md-9">
-                            <h4>{employee.name}</h4>
-                            <p><strong>Email:</strong> {employee.email}</p>
-                            <p><strong>Phone:</strong> {employee.phone}</p>
-                            <p><strong>Department:</strong> {employee.department}</p>
-                            <p><strong>Salary:</strong> {employee.salary}</p>
-                        </div>
-                    </div>
+                    ) : (
+                        <p>Loading employee details...</p>
+                    )}
                     <button className="btn btn-primary" onClick={() => navigate('/employee')}>
                         Back
                     </button>
